@@ -1,0 +1,70 @@
+"use client";
+
+import React from "react";
+import { useRouter } from "next/navigation";
+
+const PricingPage = () => {
+  const router = useRouter();
+
+  return (
+    <div className="flex min-h-screen bg-black text-white justify-center items-center">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold">Simple, Transparent Pricing</h1>
+        <p className="text-gray-400 mt-2">Choose the plan that fits you best.</p>
+
+        <div className="flex justify-center gap-6 mt-8">
+          {/* Basic Plan */}
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-72 text-white border border-gray-700">
+            <h2 className="text-2xl font-bold">Basic</h2>
+            <p className="text-3xl font-semibold mt-2">$199/month</p>
+            <ul className="mt-4 space-y-2 text-gray-400">
+              <li>✔ Access to basic features</li>
+              <li>✔ Limited AI support</li>
+              <li>✔ Community support</li>
+            </ul>
+            <button className="bg-purple-500 text-white px-6 py-2 mt-4 rounded-lg w-full">
+              Choose
+            </button>
+          </div>
+
+          {/* Pro Plan */}
+          <div className="bg-purple-700 p-6 rounded-lg shadow-lg w-72 border-2 border-purple-500">
+            <h2 className="text-2xl font-bold">Pro</h2>
+            <p className="text-3xl font-semibold mt-2">$399/month</p>
+            <ul className="mt-4 space-y-2 text-white">
+              <li>✔ Everything in Basic</li>
+              <li>✔ AI-powered quizzes</li>
+              <li>✔ Personalized insights</li>
+            </ul>
+            <button className="bg-white text-purple-700 px-6 py-2 mt-4 rounded-lg w-full">
+              Choose
+            </button>
+          </div>
+
+          {/* Enterprise Plan */}
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-72 text-white border border-gray-700">
+            <h2 className="text-2xl font-bold">Enterprise</h2>
+            <p className="text-3xl font-semibold mt-2">$899/month</p>
+            <ul className="mt-4 space-y-2 text-gray-400">
+              <li>✔ Everything in Pro</li>
+              <li>✔ Custom AI integrations</li>
+              <li>✔ Dedicated support</li>
+            </ul>
+            <button className="bg-purple-500 text-white px-6 py-2 mt-4 rounded-lg w-full">
+              Choose
+            </button>
+          </div>
+        </div>
+
+        <button
+          className="mt-6 text-purple-400 underline"
+          onClick={() => router.push("/dashboard")}
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default PricingPage;
