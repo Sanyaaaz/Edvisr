@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section className="h-screen flex flex-col justify-center items-center text-center bg-primary text-white px-6">
+    <section className="h-screen flex flex-col justify-center items-center text-center bg-gradient-to-b from-primary to-gray-900 text-white px-6">
       <motion.h1
         className="text-5xl font-bold"
         initial={{ y: 50, opacity: 0 }}

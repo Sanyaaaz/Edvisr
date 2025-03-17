@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Sidebar = () => {
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-black ">
       {/* Sidebar */}
       <div className="w-64 bg-purple-900 p-6 shadow-lg flex flex-col">
         <h2 className="text-2xl font-bold text-white">Edvisr</h2>
