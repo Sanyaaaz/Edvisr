@@ -23,6 +23,37 @@ export default function Dashboard() {
   // Greeting Logic
   const [greeting, setGreeting] = useState("");
 
+  interface ClassData {
+    name: string;
+    id?: string; // Adjust fields as per API response
+  }
+  
+  const [classes, setClasses] = useState<ClassData[]>([]);
+  
+
+  useEffect(() => {
+    fetch("/api/classroom", { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => setClasses(data.courses || [])) // Adjusted for API response format
+      .catch((error) => console.error("Error fetching classes:", error));
+  }, []);
+
+  const handleCreateClass = async () => {
+    const className = prompt("Enter class name:");
+    if (!className) return;
+
+    const response = await fetch("/api/classroom", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: className })
+    });
+
+    if (response.ok) {
+      const newClass = await response.json();
+      setClasses([...classes, newClass]);
+    }
+  };
+
   useEffect(() => {
     const hours = new Date().getHours();
     if (hours < 12) {
@@ -63,7 +94,12 @@ export default function Dashboard() {
       {/* Sidebar */}
       <div className="w-64 bg-purple-100 p-6 shadow-lg min-h-screen">
         <h2 className="text-4xl font-bold text-primary">Edvisr</h2>
-        <button className="w-full bg-accent text-white p-3 mt-6 rounded-lg shadow">+ Create New Class</button>
+        <button
+          className="w-full bg-accent text-white p-3 mt-6 rounded-lg shadow"
+          onClick={handleCreateClass}
+        >
+          + Create New Class
+        </button>
 
         <ul className="mt-8 space-y-4">
           <li className="text-primary font-semibold cursor-pointer">Dashboard</li>
@@ -115,7 +151,18 @@ export default function Dashboard() {
             </button>
             <p className="text-gray-500 mt-2">Upload a CSV file with student details for AI insights.</p>
           </div>
-
+          <div className="p-6 bg-white rounded-lg shadow mb-6">
+            <h2 className="text-2xl font-bold text-primary mb-4">Your Classes</h2>
+            {classes.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {classes.map((cls, index) => (
+                  <ClassCard key={index} name={cls.name} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No classes available. Create a new one!</p>
+            )}
+          </div>
           {/* Students List */}
           <div className="p-6 bg-white rounded-lg shadow mb-6">
             <h2 className="text-2xl font-bold text-primary mb-4">Student List</h2>
@@ -171,6 +218,13 @@ export default function Dashboard() {
 
         </div>
       </div>
+    </div>
+  );
+}
+function ClassCard({ name }: { name: string }) {
+  return (
+    <div className="p-4 bg-gray-100 rounded-lg shadow-md">
+      <h3 className="text-xl font-bold text-primary">{name}</h3>
     </div>
   );
 }
