@@ -3,6 +3,10 @@ import Features from "./components/Features";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
+import StudentList from "@/components/StudentList";
+import AddStudentForm from "@/components/AddStudentForm";
+
+
 export default function Home() {
   return (
     <main className="bg-black min-h-screen">
@@ -10,6 +14,8 @@ export default function Home() {
       <Hero />
       <Features />
       <Footer />
+      <AddStudentForm />
+      <StudentList />
     </main>
   );
 }
