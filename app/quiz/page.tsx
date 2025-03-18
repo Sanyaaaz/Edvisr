@@ -42,14 +42,25 @@ const QuizPage = () => {
           + Create New Class
         </button>
         <ul className="mt-8 space-y-4">
-          <li className="text-gray-600 cursor-pointer hover:text-primary">
-            <Link href="/dashboard">Dashboard</Link>
+          <li className="text-gray-600 cursor-pointer hover:text-purple-400 transition">
+          <Link href="/dashboard">Dashboard</Link>
+            </li>
+          <li className="text-gray-600 cursor-pointer hover:text-purple-400 transition">
+            <Link href="/quiz">Quiz</Link>
           </li>
-          <li className="text-primary font-semibold cursor-pointer">Quiz</li>
           <li className="text-gray-600 cursor-pointer hover:text-purple-400 transition">
             <Link href="/insights">Insights</Link>
           </li>
+          <li className="text-gray-600 cursor-pointer hover:text-primary">Suggestions</li>
+          <li className="text-gray-600 cursor-pointer hover:text-primary">Preview</li>
         </ul>
+
+        <div className="fixed bottom-4 left-0 w-[250px] p-4 bg-gray-200 rounded-lg text-center shadow-lg">
+          <p className="text-gray-700 text-sm">Upgrade to PRO for more features.</p>
+          <a href="/pricingpage" className="bg-accent text-white px-4 py-2 mt-2 rounded-lg inline-block">
+            Upgrade
+          </a>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-auto">
