@@ -6,7 +6,10 @@ export async function GET(req: NextRequest) {
   // Get user session
   const session = await getServerSession(authOptions);
 
+  console.log("🔍 Session Data:", session); // Debugging step
+
   if (!session || !session.accessToken) {
+    console.error("❌ Unauthorized: No session or access token");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -26,26 +29,30 @@ export async function GET(req: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error("Error fetching courses:", error);
+    console.error("⚠️ Error fetching courses:", error);
     return NextResponse.json({ error: "Failed to fetch courses" }, { status: 500 });
   }
 }
 
-// ✅ Updated POST function to create a new Google Classroom course
+
 export async function POST(req: NextRequest) {
-  // Get user session
   const session = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {
+    console.error("❌ Unauthorized request");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    // Parse the request body
-    const { name } = await req.json();
-    if (!name) return NextResponse.json({ error: "Class name is required" }, { status: 400 });
+    const body = await req.json();
+    console.log("📩 Received Body:", body); // Log request data
 
-    // Create a course with ownerId set to "me"
+    const { name } = body;
+    if (!name) {
+      console.error("❌ Missing class name in request");
+      return NextResponse.json({ error: "Class name is required" }, { status: 400 });
+    }
+
     const response = await fetch("https://classroom.googleapis.com/v1/courses", {
       method: "POST",
       headers: {
@@ -54,21 +61,26 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         name,
-        ownerId: "me", // Ensures the authenticated user is the owner
+        ownerId: "me",
         courseState: "ACTIVE",
       }),
     });
 
+    console.log("📡 Google Classroom API Response:", response.status);
+
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error creating course:", errorData);
-      throw new Error(`Error: ${response.status} - ${errorData.error.message}`);
+      console.error("❌ Error creating course:", errorData);
+      return NextResponse.json({ error: errorData }, { status: response.status });
     }
 
     const data = await response.json();
+    console.log("✅ Successfully Created Course:", data);
+
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("Error creating course:", error);
+    console.error("❌ Unexpected Error:", error);
     return NextResponse.json({ error: "Failed to create course" }, { status: 500 });
   }
 }
+
