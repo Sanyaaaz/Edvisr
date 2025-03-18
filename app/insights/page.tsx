@@ -35,7 +35,9 @@ export default function MathsDashboard() {
           </button>
 
           <ul className="mt-8 space-y-4">
-            <li className="text-primary font-semibold cursor-pointer">Dashboard</li>
+            <li className="text-gray-600 cursor-pointer hover:text-purple-400 transition">
+            <Link href="/dashboard">Dashboard</Link>
+            </li>
             <li className="text-gray-600 cursor-pointer hover:text-purple-400 transition">
               <Link href="/quiz">Quiz</Link>
             </li>
