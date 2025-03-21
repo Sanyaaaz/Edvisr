@@ -145,7 +145,7 @@ export default function Dashboard() {
         <div className="flex-1 overflow-auto p-8">
           {/* Centered Greeting */}
           <div className="flex justify-center items-center mb-8">
-            <h2 className="text-2xl font-bold text-primary text-white">{greeting}, {userName}! Ready to start your day?</h2>
+            <h2 className="text-2xl font-bold text-primary">{greeting}, {userName}! Ready to start your day?</h2>
           </div>
 
           {/* Upload Section */}

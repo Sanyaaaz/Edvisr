@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { generateWhatIfResponse } from "Edvisr\pages\api\gemini.js";
+// import { generateWhatIfResponse } from "Edvisr/pages/api/gemini.js";
 
 const QuizPage = () => {
   const [selectedClass, setSelectedClass] = useState("");
