@@ -22,7 +22,7 @@ const MainPanel = () => {
         {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Class Schedule */}
-          <div className="lg:col-span-2 bg-[#1A1A1F] rounded-2xl shadow-md p-5 border border-[#2C2C33]">
+          <div className="lg:col-span-2 bg-white/10 p-8 rounded-2xl shadow-lg hover:shadow-purple-500/30 transition-shadow">
             <h2 className="text-lg font-semibold mb-4 text-[#A594F9]">Today’s Schedule</h2>
             <div className="space-y-4">
               {[
@@ -41,7 +41,7 @@ const MainPanel = () => {
           </div>
 
           {/* Assignments */}
-          <div className="bg-[#1A1A1F] rounded-2xl shadow-md p-5 border border-[#2C2C33]">
+          <div className="bg-white/10 p-8 rounded-2xl shadow-lg hover:shadow-purple-500/30 transition-shadow">
             <h2 className="text-lg font-semibold mb-4 text-[#A594F9]">Student Assignments</h2>
             <div className="space-y-4">
               <div className="bg-[#3A2F1F] p-4 rounded-lg border-l-4 border-pink-500">
@@ -60,7 +60,7 @@ const MainPanel = () => {
           {/* Online Courses & Announcements */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* My Course */}
-            <div className="bg-[#1A1A1F] rounded-2xl shadow-md p-5 border border-[#2C2C33]">
+            <div className="bg-white/10 p-8 rounded-2xl shadow-lg hover:shadow-purple-500/30 transition-shadow">
               <h2 className="text-lg font-semibold mb-4 text-[#A594F9]">My Online Course</h2>
               <div className="space-y-3">
                 <div className="bg-[#2B2B33] p-3 rounded-lg hover:bg-[#3A3A44] transition">
@@ -75,7 +75,7 @@ const MainPanel = () => {
             </div>
 
             {/* Announcements */}
-            <div className="bg-[#1A1A1F] rounded-2xl shadow-md p-5 border border-[#2C2C33]">
+            <div className="bg-white/10 p-8 rounded-2xl shadow-lg hover:shadow-purple-500/30 transition-shadow">
               <h2 className="text-lg font-semibold mb-4 text-[#A594F9]">Announcements</h2>
               <div className="space-y-4 text-sm text-gray-300">
                 <div className="border-l-4 border-purple-500 pl-3">
@@ -89,7 +89,7 @@ const MainPanel = () => {
           </div>
 
           {/* Messages */}
-          <div className="bg-[#1A1A1F] rounded-2xl shadow-md p-5 border border-[#2C2C33]">
+          <div className="bg-white/10 p-8 rounded-2xl shadow-lg hover:shadow-purple-500/30 transition-shadow">
             <h2 className="text-lg font-semibold mb-4 text-[#A594F9]">Quick Messages</h2>
             <div className="space-y-4">
               {["James", "Tina", "Ravi"].map((name, idx) => (

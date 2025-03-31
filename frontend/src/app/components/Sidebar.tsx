@@ -1,5 +1,12 @@
 import React from "react";
-import { Home, MessageCircle, Calendar, BookOpen, FileText, Users, Settings, LogOut } from "lucide-react";
+import {  MessageCircle, Calendar, FileText, Users, Settings, LogOut } from "lucide-react";
+import Link from "next/link";
+import { AiOutlineAppstoreAdd } from 'react-icons/ai';
+import { HiOutlineChartBar } from 'react-icons/hi';
+
+
+
+
 
 const Sidebar = () => {
   return (
@@ -11,33 +18,37 @@ const Sidebar = () => {
         </div>
         <ul className="mt-6 space-y-4 px-4">
           <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
-            <Home size={20} />
-            <span>Home</span>
+            <AiOutlineAppstoreAdd size={20} />
+            <Link href='dashboard'><span>Dashboard</span></Link>
           </li>
           <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
-            <MessageCircle size={20} />
-            <span>Messages</span>
-          </li>
+  <MessageCircle size={20} />
+  <Link href="/quiz">
+    <span>Quiz</span>
+  </Link>
+</li>
+
+
           <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
             <Calendar size={20} />
             <span>Schedule</span>
           </li>
           <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
-            <BookOpen size={20} />
-            <span>Online Course</span>
+            <HiOutlineChartBar size={20} />
+            <span>Insights</span>
           </li>
           <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
             <FileText size={20} />
-            <span>Assignment</span>
+            <span>Suggestions</span>
           </li>
           <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
             <Users size={20} />
             <span>Discussion</span>
           </li>
-          <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
+          {/* <li className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-600 transition">
             <FileText size={20} />
             <span>Announcement</span>
-          </li>
+          </li> */}
         </ul>
       </div>
 
