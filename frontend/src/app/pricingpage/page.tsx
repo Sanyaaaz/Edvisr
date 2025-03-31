@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+
 import Navbar from "../components/Navbar";
 
 const PricingPage = () => {
-  const router = useRouter();
 
   return (
     <div className="bg-black text-white min-h-screen">
@@ -66,12 +65,12 @@ const PricingPage = () => {
             </div>
           </div>
 
-          <button
+          {/* <button
             className="mt-6 text-purple-400 underline"
             onClick={() => router.push("/dashboard")}
           >
             Back to Dashboard
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
