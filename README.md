@@ -1,6 +1,6 @@
 
 
-# Edvisr - AI-Powered Education Platform for Teachers
+# Edvisr - AI-Powered Reverse Tutoring Platform for Teachers
 
 **Edvisr** is an innovative AI-powered platform designed to assist teachers in planning, managing, and tracking their students' progress. By leveraging the power of AI, Edvisr customizes learning paths, generates lesson plans, and provides real-time performance analytics to ensure personalized learning experiences.
 
