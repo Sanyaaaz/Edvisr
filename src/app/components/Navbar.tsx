@@ -93,12 +93,12 @@ export default function Navbar() {
                 </button>
               </Link> */}
               <div className="hidden md:flex items-center space-x-4">
-        <Link href="/auth">
+        <Link href="/authfrontend">
           <Button variant="ghost" className="text-white hover:text-purple-400">
             Sign In
           </Button>
         </Link>
-        <Link href="/auth">
+        <Link href="/authfrontend">
           <Button className="bg-purple-600 hover:bg-purple-700 text-white">Get Started</Button>
         </Link>
       </div>
