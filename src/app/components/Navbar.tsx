@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
+import {
+  SignIn,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
 import { useEffect, useRef } from "react";
+import CustomUserButton from "./UserButton";
 
 export default function Navbar() {
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -28,8 +37,8 @@ export default function Navbar() {
 
       // Check if element is already in view (with threshold)
       const viewportThreshold = window.innerHeight * 0.3;
-      const isAlreadyVisible = 
-        elementPosition >= navbarHeight && 
+      const isAlreadyVisible =
+        elementPosition >= navbarHeight &&
         elementPosition <= viewportThreshold;
 
       if (!isAlreadyVisible) {
@@ -75,37 +84,43 @@ export default function Navbar() {
               >
                 How it Works
               </button>
-              <button
-                onClick={() => handleScroll("examples")}
-                className="hover:text-purple-400"
-              >
-                Examples
-              </button>
+              <SignedOut>
+                <Link href="/authfrontend" className="hover:text-purple-400">
+                  Dashboard
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/dashboard" className="hover:text-purple-400">
+                  Dashboard
+                </Link>
+              </SignedIn>
               <Link href="/pricingpage" className="hover:text-purple-400">
                 Pricing
               </Link>
-              {/* <Link href="/signin" className="text-white hover:text-purple-100">
-                Sign In
-              </Link>
-              <Link href="/get-started">
-                <button className="bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">
-                  Get Started
-                </button>
-              </Link> */}
               <div className="hidden md:flex items-center space-x-4">
-        <Link href="/authfrontend">
-          <Button variant="ghost" className="text-white hover:text-purple-400">
-            Sign In
-          </Button>
-        </Link>
-        <Link href="/authfrontend">
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">Get Started</Button>
-        </Link>
-      </div>
+
+                <SignedOut>
+                  <Link href="/authfrontend" passHref>
+                    <Button asChild variant="ghost" className="text-white hover:text-purple-400">
+                      <span>Sign In</span>
+                    </Button>
+                  </Link>
+
+                  <Link href="/authfrontend" passHref>
+                    <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white">
+                      <span>Get Started</span>
+                    </Button>
+                  </Link>
+                </SignedOut>
+
+                <SignedIn>
+                  <CustomUserButton />
+                </SignedIn>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </nav>
+    </nav >
   );
 }

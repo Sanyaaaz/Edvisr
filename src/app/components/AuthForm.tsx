@@ -1,11 +1,18 @@
 "use client"
 
 import type React from "react"
-
+import { useSignIn, useSignUp } from "@clerk/nextjs"
 import { useState } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card"
 import { Label } from "./ui/label"
 import { motion, AnimatePresence } from "framer-motion"
 import { FcGoogle } from "react-icons/fc"
@@ -13,30 +20,88 @@ import { FcGoogle } from "react-icons/fc"
 export default function AuthForm() {
   const [isSignIn, setIsSignIn] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const {
+    signIn,
+    setActive: setSignInActive,
+    isLoaded: isSignInLoaded,
+  } = useSignIn()
+  const {
+    signUp,
+    setActive: setSignUpActive,
+    isLoaded: isSignUpLoaded,
+  } = useSignUp()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
+    const email = (document.getElementById("email") as HTMLInputElement).value
+    const password = (document.getElementById("password") as HTMLInputElement)
+      .value
+
+    try {
+      if (isSignIn) {
+        if (!isSignInLoaded) return
+        const result = await signIn.create({ identifier: email, password })
+        if (result.status === "complete") {
+          await setSignInActive({ session: result.createdSessionId })
+        }
+      } else {
+        if (!isSignUpLoaded) return
+
+        const name = (document.getElementById("name") as HTMLInputElement).value
+        const confirmPassword = (
+          document.getElementById("confirmPassword") as HTMLInputElement
+        ).value
+
+        if (password !== confirmPassword) {
+          throw new Error("Passwords do not match")
+        }
+
+        const result = await signUp.create({
+          emailAddress: email,
+          password,
+          firstName: name,
+        })
+
+        if (result.status === "complete") {
+          await setSignUpActive({ session: result.createdSessionId })
+        }
+      }
+    } catch (err: any) {
+      console.error(err)
+      alert(err?.errors?.[0]?.message || err.message)
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setIsLoading(true)
+    setError("")
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await signIn?.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: "/", // <--- this was missing!
+      })
+    } catch (err: any) {
+      console.error(err)
+      setError("Google sign-in failed")
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
     <Card className="w-full bg-black/50 backdrop-blur-md border border-white/10">
       <CardHeader>
-        <CardTitle className="text-2xl text-center text-white">{isSignIn ? "Sign In" : "Create Account"}</CardTitle>
+        <CardTitle className="text-2xl text-center text-white">
+          {isSignIn ? "Sign In" : "Create Account"}
+        </CardTitle>
         <CardDescription className="text-center text-gray-400">
           {isSignIn
             ? "Enter your credentials to access your account"
@@ -62,7 +127,7 @@ export default function AuthForm() {
                   <Input
                     id="name"
                     placeholder="Enter your name"
-                    required={!isSignIn}
+                    required
                     className="bg-white/10 border-white/20 text-white placeholder:text-gray-500"
                   />
                 </div>
@@ -88,7 +153,9 @@ export default function AuthForm() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder={isSignIn ? "Enter your password" : "Create a password"}
+                  placeholder={
+                    isSignIn ? "Enter your password" : "Create a password"
+                  }
                   required
                   className="bg-white/10 border-white/20 text-white placeholder:text-gray-500"
                 />
@@ -103,7 +170,7 @@ export default function AuthForm() {
                     id="confirmPassword"
                     type="password"
                     placeholder="Confirm your password"
-                    required={!isSignIn}
+                    required
                     className="bg-white/10 border-white/20 text-white placeholder:text-gray-500"
                   />
                 </div>
@@ -111,7 +178,11 @@ export default function AuthForm() {
             </motion.div>
           </AnimatePresence>
 
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <span className="flex items-center">
                 <svg
@@ -120,7 +191,14 @@ export default function AuthForm() {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -129,8 +207,10 @@ export default function AuthForm() {
                 </svg>
                 {isSignIn ? "Signing in..." : "Creating account..."}
               </span>
+            ) : isSignIn ? (
+              "Sign In"
             ) : (
-              <>{isSignIn ? "Sign In" : "Create Account"}</>
+              "Create Account"
             )}
           </Button>
 
@@ -139,7 +219,9 @@ export default function AuthForm() {
               <span className="w-full border-t border-white/10"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-black px-2 text-gray-400">Or continue with</span>
+              <span className="bg-black px-2 text-gray-400">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -169,4 +251,3 @@ export default function AuthForm() {
     </Card>
   )
 }
-

@@ -7,6 +7,8 @@ import Link from "next/link";
 import { Bot } from "lucide-react";
 import Head from "next/head";
 
+import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
+
 const SparklesCore = dynamic(
   () => import("../components/Sparkles").then((mod) => mod.SparklesCore),
   { ssr: false }
@@ -19,36 +21,61 @@ export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGoogleSignIn = () => {
+  const { signIn } = useSignIn();
+  const { signUp } = useSignUp();
+  const { redirectToSignIn } = useClerk();
+
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    // Frontend-only Google sign in handling
-    console.log("Google sign in clicked");
-    setIsLoading(false);
+    try {
+      if (!signIn) throw new Error("Sign in not ready yet.");
+
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/",
+        redirectUrlComplete: "/",
+      });
+    } catch (err: any) {
+      setError(err.errors?.[0]?.message || err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-    
+
     try {
-      // Frontend-only validation
       if (!email || !password) {
         throw new Error("Please fill in all fields");
       }
-      
-      console.log("Auth attempt:", { email, password, isSignUp });
-      // Simulate async operation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes only - in real app you would handle actual auth
-      setError(isSignUp ? "Sign up functionality disabled (demo)" : "Sign in functionality disabled (demo)");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
+
+      if (!signUp || !signIn) {
+        throw new Error("Auth is not initialized yet.");
       }
+
+      if (isSignUp) {
+        const result = await signUp.create({
+          emailAddress: email,
+          password: password,
+        });
+
+        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+        await signUp.attemptEmailAddressVerification({ code: "000000" }); // use real code flow later
+
+        window.location.href = "/";
+      } else {
+        const result = await signIn.create({
+          identifier: email,
+          password: password,
+        });
+
+        window.location.href = "/";
+      }
+    } catch (err: any) {
+      setError(err.errors?.[0]?.message || err.message);
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +98,7 @@ export default function AuthPage() {
       <div className="min-h-screen bg-black antialiased relative overflow-hidden flex flex-col items-center p-4">
         <div className="h-full w-full absolute inset-0 z-0">
           <SparklesCore
-            id="particles-auth" 
+            id="particles-auth"
             background="transparent"
             minSize={0.6}
             maxSize={1.4}
@@ -87,7 +114,7 @@ export default function AuthPage() {
               <Bot className="w-10 h-10 text-purple-500" />
               <span className="text-white font-medium text-2xl">Edvisr</span>
             </Link>
-          </div> 
+          </div>
 
           <div className="w-full bg-gray-900/80 backdrop-blur-sm p-8 rounded-lg shadow-lg border border-gray-800">
             <h2 className="text-3xl font-semibold text-center mb-6 text-white">
