@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -14,33 +13,17 @@ const SparklesCore = dynamic(
 );
 
 export default function AuthPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
-
-    const token = searchParams?.get('token');
-    if (token) {
-      localStorage.setItem("auth_token", token);
-      router.push("/dashboard");
-    }
-  }, [searchParams, router, isClient]);
 
   const handleGoogleSignIn = () => {
     setIsLoading(true);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
-    window.location.href = `${backendUrl}/auth/google`;
+    // Frontend-only Google sign in handling
+    console.log("Google sign in clicked");
+    setIsLoading(false);
   };
 
   const handleEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,35 +32,27 @@ export default function AuthPage() {
     setIsLoading(true);
     
     try {
-      const endpoint = isSignUp ? "/auth/register" : "/auth/login";
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      // Frontend-only validation
+      if (!email || !password) {
+        throw new Error("Please fill in all fields");
+      }
       
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Authentication failed");
+      console.log("Auth attempt:", { email, password, isSignUp });
+      // Simulate async operation
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      localStorage.setItem("auth_token", data.token);
-      router.push("/dashboard");
+      // For demo purposes only - in real app you would handle actual auth
+      setError(isSignUp ? "Sign up functionality disabled (demo)" : "Sign in functionality disabled (demo)");
     } catch (err: unknown) {
-      setIsLoading(false);
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  if (!isClient) {
-    return (
-      <div className="fixed inset-0 bg-black flex items-center justify-center">
-        <div className="animate-pulse text-white">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -129,9 +104,6 @@ export default function AuthPage() {
               <div>
                 <input
                   type="email"
-                  id="email"
-                  name="email"
-                  autoComplete="email"
                   placeholder="Email Address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -144,9 +116,6 @@ export default function AuthPage() {
               <div>
                 <input
                   type="password"
-                  id="password"
-                  name="password"
-                  autoComplete={isSignUp ? "new-password" : "current-password"}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
