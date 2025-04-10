@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Bot } from "lucide-react";
 import Head from "next/head";
-
+import { useRouter } from "next/navigation";
 import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
 
 const SparklesCore = dynamic(
@@ -25,6 +25,8 @@ export default function AuthPage() {
   const { signUp } = useSignUp();
   const { redirectToSignIn } = useClerk();
 
+  const router = useRouter();
+
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
@@ -32,7 +34,7 @@ export default function AuthPage() {
 
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/",
+        redirectUrl: "/dashboard",
         redirectUrlComplete: "/",
       });
     } catch (err: any) {
@@ -65,14 +67,14 @@ export default function AuthPage() {
         await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
         await signUp.attemptEmailAddressVerification({ code: "000000" }); // use real code flow later
 
-        window.location.href = "/";
+        router.push("/dashboard");
       } else {
         const result = await signIn.create({
           identifier: email,
           password: password,
         });
 
-        window.location.href = "/";
+        router.push("/dashboard");
       }
     } catch (err: any) {
       setError(err.errors?.[0]?.message || err.message);
@@ -116,7 +118,7 @@ export default function AuthPage() {
             </Link>
           </div>
 
-          <div className="w-full bg-gray-900/80 backdrop-blur-sm p-8 rounded-lg shadow-lg border border-gray-800">
+          <div className="w-full bg-black backdrop-blur-sm p-8 rounded-lg shadow-lg border border-gray-800">
             <h2 className="text-3xl font-semibold text-center mb-6 text-white">
               {isSignUp ? "Create an Account" : "Sign In"}
             </h2>

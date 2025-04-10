@@ -69,6 +69,15 @@ export default function CustomUserButton() {
                   Profile
                 </button>
 
+                <Link href="/dashboard">
+                  <button
+                    onClick={() => setOpen(false)}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-purple-600 transition"
+                  >
+                    Dashboard
+                  </button>
+                </Link>
+
                 <button
                   onClick={() => {
                     signOut();

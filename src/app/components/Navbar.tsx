@@ -84,7 +84,7 @@ export default function Navbar() {
               >
                 How it Works
               </button>
-              <SignedOut>
+              {/* <SignedOut>
                 <Link href="/authfrontend" className="hover:text-purple-400">
                   Dashboard
                 </Link>
@@ -93,7 +93,7 @@ export default function Navbar() {
                 <Link href="/dashboard" className="hover:text-purple-400">
                   Dashboard
                 </Link>
-              </SignedIn>
+              </SignedIn> */}
               <Link href="/pricingpage" className="hover:text-purple-400">
                 Pricing
               </Link>
