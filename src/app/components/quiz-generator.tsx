@@ -20,7 +20,7 @@ export default function QuizGenerator() {
   })
 
   const [isGenerating, setIsGenerating] = useState(false)
-  const [quizGenerated, setQuizGenerated] = useState(false)
+  const [quizGenerated, setQuizGenerated] = useState<string | false>(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -31,16 +31,34 @@ export default function QuizGenerator() {
     setFormData((prev) => ({ ...prev, difficulty: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsGenerating(true)
     setQuizGenerated(false)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsGenerating(false)
-      setQuizGenerated(true)
-    }, 2000)
+    try {
+      const response = await fetch("https://edvisr-backend.onrender.com/generate-quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          grade: formData.class,
+          topic: formData.topic,
+          difficulty: formData.difficulty
+        })
+      })
+
+      const data = await response.json()
+
+      // Update UI with real quiz content
+      setQuizGenerated(data.questions || "Quiz generated successfully.")
+    } catch (error) {
+      console.error("Error generating quiz:", error)
+      setQuizGenerated("Failed to generate quiz.")
+    }
+
+    setIsGenerating(false)
   }
 
   return (
@@ -144,10 +162,7 @@ export default function QuizGenerator() {
               animate={{ opacity: 1, height: "auto" }}
               className="p-4 rounded-lg bg-purple-500/20 border border-purple-500/30"
             >
-              <p className="text-white text-sm">
-                Your quiz on <span className="font-semibold">{formData.topic}</span> has been generated! Check your
-                dashboard to view and share it.
-              </p>
+              <p className="text-white text-sm whitespace-pre-wrap">{quizGenerated}</p>
             </motion.div>
           </div>
         )}

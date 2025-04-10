@@ -15,24 +15,28 @@ export default function WhatIfGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedQuestion, setGeneratedQuestion] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsGenerating(true)
     setGeneratedQuestion("")
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsGenerating(false)
-      // Generate a sample "What If" question based on the topic
-      const questions = [
-        `What if ${topic} had never been discovered?`,
-        `What if ${topic} evolved differently throughout history?`,
-        `What if ${topic} was suddenly unavailable to humanity?`,
-        `What if ${topic} had opposite properties than it currently does?`,
-        `What if everyone suddenly understood ${topic} perfectly?`,
-      ]
-      setGeneratedQuestion(questions[Math.floor(Math.random() * questions.length)])
-    }, 1500)
+    try {
+      const response = await fetch("https://edvisr-backend.onrender.com/generate-whatif", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ topic })
+      })
+
+      const data = await response.json()
+      setGeneratedQuestion(data.what_if_question || "No question returned.")
+    } catch (error) {
+      console.error("Error generating question:", error)
+      setGeneratedQuestion("Failed to generate question.")
+    }
+
+    setIsGenerating(false)
   }
 
   return (
