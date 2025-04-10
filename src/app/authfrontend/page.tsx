@@ -20,23 +20,25 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsHydrated(true);
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!isClient) return;
 
-    const token = searchParams.get('token');
+    const token = searchParams?.get('token');
     if (token) {
       localStorage.setItem("auth_token", token);
       router.push("/dashboard");
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, isClient]);
 
   const handleGoogleSignIn = () => {
+    setIsLoading(true);
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
     window.location.href = `${backendUrl}/auth/google`;
   };
@@ -44,6 +46,8 @@ export default function AuthPage() {
   const handleEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
+    
     try {
       const endpoint = isSignUp ? "/auth/register" : "/auth/login";
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${endpoint}`, {
@@ -51,11 +55,14 @@ export default function AuthPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
+      
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Authentication failed");
+      
       localStorage.setItem("auth_token", data.token);
       router.push("/dashboard");
     } catch (err: unknown) {
+      setIsLoading(false);
       if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -64,7 +71,7 @@ export default function AuthPage() {
     }
   };
 
-  if (!isHydrated) {
+  if (!isClient) {
     return (
       <div className="fixed inset-0 bg-black flex items-center justify-center">
         <div className="animate-pulse text-white">Loading...</div>
@@ -75,6 +82,7 @@ export default function AuthPage() {
   return (
     <>
       <Head>
+        <title>{isSignUp ? "Sign Up" : "Sign In"} | Edvisr</title>
         <style>{`
           html, body {
             background-color: #000;
@@ -106,43 +114,64 @@ export default function AuthPage() {
             </Link>
           </div> 
 
-          <div className="w-full bg-gray-900 p-8 rounded-lg shadow-lg">
-            <h2 className="text-3xl font-semibold text-center mb-6">
+          <div className="w-full bg-gray-900/80 backdrop-blur-sm p-8 rounded-lg shadow-lg border border-gray-800">
+            <h2 className="text-3xl font-semibold text-center mb-6 text-white">
               {isSignUp ? "Create an Account" : "Sign In"}
             </h2>
 
-            {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+            {error && (
+              <p className="text-red-500 text-sm mb-4 text-center">
+                {error}
+              </p>
+            )}
 
             <form className="space-y-4" onSubmit={handleEmailSignIn}>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                autoComplete="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
+              <div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  autoComplete="email"
+                  placeholder="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
 
-              <input
-                type="password"
-                id="password"
-                name="password"
-                autoComplete={isSignUp ? "new-password" : "current-password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
+              <div>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  autoComplete={isSignUp ? "new-password" : "current-password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
 
               <button
                 type="submit"
-                className="w-full bg-purple-500 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-purple-600 transition"
+                className="w-full bg-purple-500 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-purple-600 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                disabled={isLoading}
               >
-                {isSignUp ? "Sign Up" : "Sign In"}
+                {isLoading ? (
+                  <span className="inline-flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {isSignUp ? "Creating Account..." : "Signing In..."}
+                  </span>
+                ) : (
+                  isSignUp ? "Sign Up" : "Sign In"
+                )}
               </button>
             </form>
 
@@ -153,8 +182,9 @@ export default function AuthPage() {
             </div>
 
             <button
-              className="w-full flex items-center justify-center bg-white text-gray-900 py-3 rounded-lg shadow hover:bg-gray-200 transition"
+              className="w-full flex items-center justify-center bg-white text-gray-900 py-3 rounded-lg shadow hover:bg-gray-200 transition disabled:opacity-70 disabled:cursor-not-allowed"
               onClick={handleGoogleSignIn}
+              disabled={isLoading}
             >
               <FcGoogle className="text-2xl mr-2" />
               {isSignUp ? "Sign Up with Google" : "Sign In with Google"}
@@ -164,7 +194,8 @@ export default function AuthPage() {
               {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-purple-500 hover:underline"
+                className="text-purple-500 hover:underline focus:outline-none"
+                disabled={isLoading}
               >
                 {isSignUp ? "Sign In" : "Sign Up"}
               </button>
