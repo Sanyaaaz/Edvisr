@@ -37,7 +37,7 @@ export default function AuthPage() {
   }, [searchParams, router]);
 
   const handleGoogleSignIn = () => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
     window.location.href = `${backendUrl}/auth/google`;
   };
 
