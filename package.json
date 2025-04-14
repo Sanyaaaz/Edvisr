@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.14.2",
     "@clerk/themes": "^2.2.30",
+    "@radix-ui/react-dialog": "^1.1.7",
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
@@ -26,7 +27,8 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.2.0",
+    "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
