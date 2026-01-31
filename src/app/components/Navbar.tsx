@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import {
-  SignIn,
-  SignInButton,
-  SignUpButton,
+  //SignIn,
+  //SignInButton,
+  //SignUpButton,
   SignedIn,
   SignedOut,
-  UserButton,
+  //UserButton,
 } from '@clerk/nextjs';
 import { useEffect, useRef } from "react";
 import CustomUserButton from "./UserButton";
