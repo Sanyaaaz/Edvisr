@@ -7,12 +7,16 @@ import Link from "next/link";
 import { Bot } from "lucide-react";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
-import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
+import { useSignIn, useSignUp } from "@clerk/nextjs";
 
 const SparklesCore = dynamic(
   () => import("../components/Sparkles").then((mod) => mod.SparklesCore),
   { ssr: false }
 );
+
+type ClerkErrorLike = {
+  errors?: { message?: string }[];
+};
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -23,9 +27,21 @@ export default function AuthPage() {
 
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
-  const { redirectToSignIn } = useClerk();
 
   const router = useRouter();
+
+  const extractErrorMessage = (err: unknown): string => {
+    if (err instanceof Error) {
+      return err.message;
+    }
+
+    if (typeof err === "object" && err !== null) {
+      const clerkErr = err as ClerkErrorLike;
+      return clerkErr.errors?.[0]?.message ?? "An unknown error occurred";
+    }
+
+    return "An unknown error occurred";
+  };
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -37,8 +53,8 @@ export default function AuthPage() {
         redirectUrl: "/dashboard",
         redirectUrlComplete: "/",
       });
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || err.message);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -59,25 +75,30 @@ export default function AuthPage() {
       }
 
       if (isSignUp) {
-        const result = await signUp.create({
+        await signUp.create({
           emailAddress: email,
           password: password,
         });
 
-        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-        await signUp.attemptEmailAddressVerification({ code: "000000" }); // use real code flow later
+        await signUp.prepareEmailAddressVerification({
+          strategy: "email_code",
+        });
+
+        await signUp.attemptEmailAddressVerification({
+          code: "000000",
+        });
 
         router.push("/dashboard");
       } else {
-        const result = await signIn.create({
+        await signIn.create({
           identifier: email,
           password: password,
         });
 
         router.push("/dashboard");
       }
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || err.message);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -98,17 +119,18 @@ export default function AuthPage() {
       </Head>
 
       <div className="min-h-screen bg-black antialiased relative overflow-hidden flex flex-col items-center p-4">
-        <div className="h-full w-full absolute inset-0 z-0">
-          <SparklesCore
-            id="particles-auth"
-            background="transparent"
-            minSize={0.6}
-            maxSize={1.4}
-            particleDensity={100}
-            className="w-full h-full"
-            particleColor="#FFFFFF"
-          />
-        </div>
+      <div className="absolute inset-0 z-0 pointer-events-none">
+  <SparklesCore
+    id="particles-auth"
+    background="transparent"
+    minSize={0.6}
+    maxSize={1.4}
+    particleDensity={100}
+    className="w-full h-full"
+    particleColor="#FFFFFF"
+  />
+</div>
+
 
         <div className="relative z-10 w-full max-w-md mt-32 flex flex-col items-center">
           <div className="mb-8 flex justify-center">
@@ -130,46 +152,38 @@ export default function AuthPage() {
             )}
 
             <form className="space-y-4" onSubmit={handleEmailSignIn}>
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
+                disabled={isLoading}
+              />
 
-              <div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
+                disabled={isLoading}
+              />
 
               <button
                 type="submit"
-                className="w-full bg-purple-500 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-purple-600 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-purple-500 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-purple-600 transition disabled:opacity-70"
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <span className="inline-flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    {isSignUp ? "Creating Account..." : "Signing In..."}
-                  </span>
-                ) : (
-                  isSignUp ? "Sign Up" : "Sign In"
-                )}
+                {isLoading
+                  ? isSignUp
+                    ? "Creating Account..."
+                    : "Signing In..."
+                  : isSignUp
+                  ? "Sign Up"
+                  : "Sign In"}
               </button>
             </form>
 
@@ -180,7 +194,7 @@ export default function AuthPage() {
             </div>
 
             <button
-              className="w-full flex items-center justify-center bg-white text-gray-900 py-3 rounded-lg shadow hover:bg-gray-200 transition disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center bg-white text-gray-900 py-3 rounded-lg shadow hover:bg-gray-200 transition disabled:opacity-70"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
             >
@@ -192,7 +206,7 @@ export default function AuthPage() {
               {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-purple-500 hover:underline focus:outline-none"
+                className="text-purple-500 hover:underline"
                 disabled={isLoading}
               >
                 {isSignUp ? "Sign In" : "Sign Up"}
