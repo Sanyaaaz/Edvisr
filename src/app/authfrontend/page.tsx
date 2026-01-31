@@ -5,7 +5,6 @@ import { FcGoogle } from "react-icons/fc";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Bot } from "lucide-react";
-import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 
@@ -106,18 +105,6 @@ export default function AuthPage() {
 
   return (
     <>
-      <Head>
-        <title>{isSignUp ? "Sign Up" : "Sign In"} | Edvisr</title>
-        <style>{`
-          html, body {
-            background-color: #000;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-          }
-        `}</style>
-      </Head>
-
       <div className="min-h-screen bg-black antialiased relative overflow-hidden flex flex-col items-center p-4">
       <div className="absolute inset-0 z-0 pointer-events-none">
   <SparklesCore
