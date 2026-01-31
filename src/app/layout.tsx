@@ -34,8 +34,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen overflow-x-hidden`}
       >
-        <ClerkProvider appearance={{ baseTheme: dark }}>
-
+        <ClerkProvider 
+          appearance={{ baseTheme: dark }}
+          publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ""}
+        >
           {/* ✨ Client-only Sparkles */}
           <ClientSparkles />
 
@@ -43,7 +45,6 @@ export default function RootLayout({
           <div className="relative z-10">
             {children}
           </div>
-
         </ClerkProvider>
       </body>
     </html>

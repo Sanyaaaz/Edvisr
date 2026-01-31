@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Home } from "lucide-react";
 
 export default function NotFound() {
   return (
@@ -14,7 +13,6 @@ export default function NotFound() {
           href="/"
           className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
         >
-          <Home className="w-5 h-5" />
           Go Back Home
         </Link>
       </div>
