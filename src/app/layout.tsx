@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SparklesCore } from "./components/Sparkles"; 
-import {ClerkProvider} from '@clerk/nextjs';
-import { dark } from '@clerk/themes'
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import ClientSparkles from "./components/clientSparkles";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,36 +22,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <ClerkProvider
-    appearance={{
-      baseTheme: dark,
-    }}
-    >
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen overflow-x-hidden`}
       >
-        {/* Starry Background */}
-        <SparklesCore
-          background="transparent"
-          particleColor="#ffffff"
-          minSize={1}
-          maxSize={3}
-          particleDensity={100}
-          speed={1}
-          className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none"
-        />
+        <ClerkProvider appearance={{ baseTheme: dark }}>
 
-        {/* App Content */}
-        <div className="relative z-10">
-          {children}
-        </div>
+          {/* ✨ Client-only Sparkles */}
+          <ClientSparkles />
+
+          {/* App Content */}
+          <div className="relative z-10">
+            {children}
+          </div>
+
+        </ClerkProvider>
       </body>
     </html>
-    </ClerkProvider>
   );
 }
