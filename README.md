@@ -1,4 +1,5 @@
 Backend Repository : https://github.com/poorvigoell/Edvisr-backend
+Deployed Link : https://edvisr.netlify.app/
 
 # Edvisr - AI-Powered Reverse Tutoring Platform for Teachers
 
