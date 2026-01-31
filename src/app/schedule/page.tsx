@@ -32,7 +32,7 @@ export default function SchedulePage() {
           {/* Weekly Schedule */}
           <div className="lg:col-span-2 bg-white/10 p-8 rounded-2xl shadow-lg hover:shadow-purple-500/30 transition-shadow">
             <h2 className="text-lg font-semibold mb-4 text-[#A594F9]">
-              This Week's Schedule
+              This Week&apos;s Schedule
             </h2>
             <div className="space-y-4">
               {[

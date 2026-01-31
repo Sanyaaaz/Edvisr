@@ -203,7 +203,7 @@ export default function AuthPage() {
             </button>
 
             <p className="text-center mt-4 text-gray-400">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+              {isSignUp ? "Already have an account?" : "Don&apos;t have an account?"}{" "}
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-purple-500 hover:underline"
