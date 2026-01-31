@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.14.2",
-    "@clerk/themes": "^2.2.30",
+    "@clerk/themes": "^2.4.51",
     "@radix-ui/react-dialog": "^1.1.7",
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/react": "^3.0.0",
